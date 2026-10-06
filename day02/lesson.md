@@ -1,145 +1,130 @@
-# Day 2 — `std::vector`, `std::string`, references and `const`
+# Day 2 — Types, decisions, loops and functions
 
-**Time:** ~20 min reading + ~50 min exercises
-**Goal:** store many values (sensor readings, image pixels), and pass big data to functions **without copying it**.
+**Goal:** write small functions that do pixel and robot maths, and know the type traps that cause real CV bugs.
+**You need from Day 1:** how to run a program in Visual Studio (Startup Item + Ctrl+F5) and how to use a breakpoint.
 
----
-
-## 1. `std::vector` — C++'s list (but one type only)
-
-```cpp
-#include <vector>
-
-std::vector<double> ranges = {1.2, 0.85, 3.4};   // Python: ranges = [1.2, 0.85, 3.4]
-ranges.push_back(2.0);                            // .append(2.0)
-std::cout << ranges.size();                       // len(ranges)  -> 4
-std::cout << ranges[0];                           // ranges[0]    -> 1.2 (NO bounds check!)
-std::cout << ranges.at(10);                       // bounds-checked: throws std::out_of_range
-ranges.back();  ranges.front();  ranges.empty();  // last, first, is it empty?
-
-std::vector<int> hist(256, 0);                    // 256 ints, all 0      ([0]*256)
-std::vector<std::uint8_t> image(640 * 480);       // 307200 bytes, all 0
-```
-
-- A vector stores its elements **contiguously** in memory, like a numpy array. That's why it's fast.
-- `v[i]` with a bad `i` does **not** raise an error like Python does. It reads or writes random memory ("undefined behaviour"). In Debug builds MSVC usually catches it with an assertion popup, but in Release it silently corrupts data. Use `.at(i)` while learning if you're unsure.
-- There is no negative indexing: `v[-1]` is a bug. Use `v.back()`.
-
-### Looping
-```cpp
-for (double r : ranges) {              // Python: for r in ranges:   (r is a COPY)
-    std::cout << r << "\n";
-}
-for (std::size_t i = 0; i < ranges.size(); ++i) {   // when you need the index
-    std::cout << i << ": " << ranges[i] << "\n";
-}
-```
-`.size()` returns `std::size_t`, an **unsigned** integer. Comparing it with a signed `int` triggers warning C4018/C4389. It also bites in a classic way: `ranges.size() - 1` when the vector is empty gives about 18 quintillion, not −1. So check `empty()` first.
-
----
-
-## 2. Images are just vectors
-
-A grayscale image of `width × height` stored row by row ("row-major", same as numpy and OpenCV):
-
-```
-index = y * width + x          // pixel (x, y): x = column, y = row
-```
-```cpp
-std::vector<std::uint8_t> img(width * height);
-img[y * width + x] = 255;      // numpy: img[y, x] = 255
-```
-On Day 13 you'll see that OpenCV's `cv::Mat` is exactly this, plus a header (width, height, type).
-
----
-
-## 3. `std::string`
-
-```cpp
-#include <string>
-std::string name = "camera";
-name += "_left";                       // "camera_left"
-name.size();                           // 11
-name.substr(0, 6);                     // "camera"   (start, length)  — Python: name[0:6]
-name.find("left");                     // 7, or std::string::npos if not found
-name.starts_with("cam");               // true (C++20)
-std::string s = std::to_string(42);    // str(42)
-double d = std::stod("3.14");          // float("3.14")
-int i = std::stoi("42");               // int("42")
-```
-`'a'` (single quotes) is a `char`, `"a"` (double quotes) is a string. They are different types.
-
-### Parsing text with `std::istringstream`
-Sensor drivers and log files often give you lines of text. `istringstream` splits on whitespace for you:
-```cpp
-#include <sstream>
-std::istringstream in("SCAN 3 1.5 2.0 0.7");
-std::string tag;  int n;  double a, b, c;
-in >> tag >> n >> a >> b >> c;       // tag="SCAN", n=3, a=1.5 ...
-if (!in) { /* reading failed: bad or missing data */ }
-```
-
----
-
-## 4. References — the most important idea today
-
-A **reference** is another name for an existing variable:
-```cpp
-int a = 5;
-int& r = a;   // r IS a (an alias)
-r = 10;       // now a == 10
-```
-
-### Why it matters: function parameters
-
-```cpp
-void f(std::vector<double> v);         // BY VALUE:     copies the whole vector
-void g(std::vector<double>& v);        // BY REFERENCE: works on the caller's vector, can modify it
-void h(const std::vector<double>& v);  // BY CONST REFERENCE: no copy, read-only  <-- most common
-```
-
-> ⚠️ **Python ↔ C++ difference.** In Python, passing a list to a function lets the function modify the caller's list. In C++, **by-value copies everything**. If `f` modifies `v`, the caller sees no change. And copying a 1920×1080×3 image (6 MB) on every call, 30 times a second, really hurts.
-
-**Rules of thumb (use these for the rest of the course):**
-| Parameter type | Pass as |
+## ⏱️ Your 90 minutes
+| Time | What |
 |---|---|
-| Small things: `int`, `double`, `bool`, `char` | by value: `double x` |
-| Big things you only **read**: vectors, strings, images | `const T&`: `const std::vector<double>& v` |
-| Things the function must **modify** | `T&`: `std::vector<double>& v` |
-| Returning a new result | just `return` it. C++ moves it out cheaply (Day 7) |
+| 0–25 min | Read this page (sections 1–5). Type the small snippets into `day01/hello.cpp` and run them if you want to try something |
+| 25–35 min | **Core** `day02_ex01`: warm-up with variables and integer division |
+| 35–55 min | **Core** `day02_ex02`: pixels with `if` and clamping |
+| 55–80 min | **Core** `day02_ex03`: robot maths with functions and `while` loops |
+| 80–90 min | Compare with `day02/solutions/`, tick the checklist |
+| *extra time* | *Bonus* `day02_ex04`: draw a circle with nested loops |
 
-Range-for works with references too:
+Stuck on one exercise for more than 15 minutes? Look at its solution, understand it, and move on. Finishing the core matters more than finishing everything.
+
+---
+
+## 1. Variables and types
+
 ```cpp
-for (double& r : ranges) { r *= 2.0; }          // modifies the elements
-for (const std::string& s : names) { ... }      // no copies of each string
+int count = 10;              // whole number (about ±2.1 billion)
+double speed = 0.5;          // real number. Use this by default
+float  gain  = 0.5f;         // smaller real number (used in OpenCV images). Note the f
+bool   ok    = true;         // true / false (lowercase!)
+char   c     = 'A';          // one character, single quotes
+std::uint8_t pixel = 200;    // 0..255, the type of a grayscale pixel (needs #include <cstdint>)
+const double kPi = 3.14159265358979;   // const = can never be changed
 ```
 
-### `const`
-`const` promises "this will not change", and the compiler enforces it. Use it everywhere you can. It documents intent and catches bugs:
+### Three traps every CV/robotics engineer hits
+
+**1. Integer division throws away the fraction:**
 ```cpp
-const int width = 640;
-width = 800;               // error C3892: you cannot assign to a variable that is const
+int a = 7, b = 2;
+std::cout << a / b;                        // 3, not 3.5!
+std::cout << static_cast<double>(a) / b;   // 3.5  (convert first)
+std::cout << a / 2.0;                      // 3.5  (2.0 is a double)
+```
+`static_cast<double>(a)` is C++'s conversion, like `float(a)` in Python.
+
+**2. Small unsigned types wrap around:**
+```cpp
+std::uint8_t p = 250;
+p = p + 10;     // 260 doesn't fit in 0..255, so it wraps: p == 4  (a bright pixel turns black!)
+```
+numpy does the same: `np.uint8(250) + np.uint8(10)` gives `4`. That's why image code **clamps** values.
+
+**3. Converting double → int cuts off the fraction:**
+```cpp
+int i = static_cast<int>(2.9);              // 2
+int r = static_cast<int>(std::round(2.9));  // 3   (needs #include <cmath>)
 ```
 
 ---
 
-## Today's exercises (`day02/exercises/`)
+## 2. Decisions
 
-| Target | You practise |
-|---|---|
-| `day02_ex01` sensor stats | vectors, loops, `const&`, empty-input edge cases |
-| `day02_ex02` references | by value vs by reference: fix the broken functions |
-| `day02_ex03` gray image | an image as `vector<uint8_t>`, `y*w+x`, invert, threshold, histogram |
-| `day02_ex04` parse lidar | `std::string`, `istringstream`, input validation |
+```cpp
+if (v < 0) {
+    v = 0;
+} else if (v > 255) {
+    v = 255;
+} else {
+    // already fine
+}
+```
+Comparisons: `==  !=  <  <=  >  >=`. Logic: `&&` (and), `||` (or), `!` (not).
+**Classic bug:** `if (x = 5)` *assigns* 5. You meant `if (x == 5)`.
 
-### Checklist
-- [ ] All four exercises show **0 failed**
-- [ ] I can explain the difference between `f(std::vector<double> v)`, `f(std::vector<double>& v)` and `f(const std::vector<double>& v)`
-- [ ] I know what pixel `img[3 * width + 5]` is (x = ?, y = ?)
-- [ ] I put a breakpoint inside a loop and watched a vector's contents in the debugger (expand it in **Locals**)
+---
 
-### Stretch goal
-In `ex03`, write `std::vector<std::uint8_t> flip_horizontal(const std::vector<std::uint8_t>& img, int width, int height)` (mirror image left↔right) and test it with a few `CHECK`s of your own.
+## 3. Loops
 
-### When you're done
-Compare your code with `day02/solutions/`, note your open questions, and move on to Day 3.
+```cpp
+// Python: for i in range(5):
+for (int i = 0; i < 5; ++i) {     // start ; keep going while true ; step (++i means i = i + 1)
+    std::cout << i << " ";
+}
+
+// Python: while angle > 180:
+while (angle > 180.0) {
+    angle -= 360.0;               // same as angle = angle - 360.0
+}
+```
+
+---
+
+## 4. Functions
+
+```cpp
+// return-type  name ( type name, type name )
+double deg_to_rad(double deg) {
+    return deg * 3.14159265358979 / 180.0;
+}
+
+int main() {
+    double r = deg_to_rad(90.0);   // call it like in Python
+}
+```
+- Every parameter and the return value has a type. `void` means "returns nothing".
+- Write helper functions **above** `main`, because C++ must see a function before you use it.
+
+---
+
+## 5. How the exercises work
+
+Each exercise file has functions with `// TODO` inside. `main()` at the bottom checks your functions and prints:
+```
+  PASS  clamp_pixel(300) == 255
+  FAIL  rgb_to_gray(255, 0, 0) == 76   (...ex02_pixels.cpp:41)
+```
+Fix FAILs one at a time. The number at the end is the line of the check. Your goal is **0 failed**.
+Run: Startup Item `day02_ex02.exe` + **Ctrl+F5**, or in a terminal `.\build.ps1 day02_ex02`.
+
+Common errors today:
+- `C2065: undeclared identifier` → a typo, or the variable is declared further down.
+- `C2143: missing ';'` → look at the line **before** the one reported.
+- `C4244: conversion from 'double' to 'int'` (a warning) → add `static_cast<int>(...)` if you really mean it.
+
+---
+
+## Checklist
+- [ ] **Core:** `day02_ex01`, `day02_ex02`, `day02_ex03` show **0 failed**
+- [ ] I can explain why `7 / 2` is `3`, and why a `uint8_t` holding 250 becomes `4` after adding 10
+- [ ] I used a breakpoint + **F10** at least once today to see why a check failed
+- [ ] *Bonus:* `day02_ex04` draws the circle
+
+**Next:** Day 3, `std::vector`: storing many values, such as a whole image.

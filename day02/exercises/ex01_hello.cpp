@@ -1,12 +1,12 @@
-// Day 1 - Exercise 1: build, run, debug.
+// Day 2 - Exercise 1 (Core, ~10 min): warm-up with variables and integer division.
 //
-// Run:   .\build.ps1 day01_ex01      (or pick day01_ex01.exe in Visual Studio)
+// Run:   .\build.ps1 day02_ex01      (or pick day02_ex01.exe in Visual Studio + Ctrl+F5)
 //
 // Tasks:
-//   1. Change the greeting to include your name. Build and run.
+//   1. Change the greeting to include your name.
 //   2. Fill in the TODOs below so that every CHECK passes.
-//   3. Put a breakpoint (F9) on the "frame_bytes" line, press F5, and
-//      step with F10 while watching the variables in the Locals window.
+//   3. If TODO 4 fails: put a breakpoint (F9) on the "mb_per_second" line, press F5,
+//      step with F10 and look at the values in the Locals window.
 
 #include <iostream>
 

@@ -1,9 +1,9 @@
-// Day 3 - Exercise 1: tests for the geometry library.
+// Day 4 - Exercise 1: tests for the geometry library.
 //
-// Run:   .\build.ps1 day03_ex01
+// Run:   .\build.ps1 day04_ex01
 //
 // Nothing to change in THIS file. Implement exercises/geometry.cpp until all checks pass.
-// (This same test file is also built against the reference solution as day03_sol01.)
+// (This same test file is also built against the reference solution as day04_sol01.)
 
 #include <iostream>
 #include <vector>

@@ -1,4 +1,4 @@
-// Day 0 - Exercise 1: reference solution.
+// Day 1 - Exercise 1: reference solution.
 
 #include <iostream>
 

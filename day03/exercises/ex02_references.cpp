@@ -1,49 +1,46 @@
-// Day 2 - Exercise 2: reference solution.
+// Day 3 - Exercise 2: by value vs by reference.
+//
+// Run:   .\build.ps1 day03_ex02
+//
+// The first three functions are BROKEN: they compile and run, but the caller
+// never sees the change. Each needs a tiny fix (often a single '&').
+// Then implement the last two.
 
 #include <iostream>
 #include <vector>
 
 #include "check.hpp"
 
-// FIX: take the vector by reference (&), otherwise we double a copy.
-void double_all(std::vector<double>& v) {
+// BUG: should double every element of the CALLER's vector.
+void double_all(std::vector<double> v) {
     for (double& x : v) {
         x *= 2.0;
     }
 }
 
-// FIX: both parameters by reference. (The standard library has std::swap.)
-void swap_values(int& a, int& b) {
+// BUG: should swap the caller's two ints.
+void swap_values(int a, int b) {
     int tmp = a;
     a = b;
     b = tmp;
 }
 
-// FIX: 'double& x' so the loop variable refers to the element itself.
+// BUG: the parameter is right this time, but the loop modifies copies.
 void add_offset(std::vector<double>& v, double offset) {
-    for (double& x : v) {
+    for (double x : v) {
         x += offset;
     }
 }
 
+// TODO: return a NEW vector with every element multiplied by k.
+//       The input must stay unchanged (that's what const guarantees).
 std::vector<double> scaled_copy(const std::vector<double>& v, double k) {
-    std::vector<double> out;
-    out.reserve(v.size());  // optional: allocate once instead of growing repeatedly
-    for (double x : v) {
-        out.push_back(x * k);
-    }
-    return out;
+    return v;  // TODO
 }
 
+// TODO: index of the largest element, or -1 if v is empty.
 int argmax(const std::vector<double>& v) {
-    if (v.empty()) {
-        return -1;
-    }
-    int best = 0;
-    for (int i = 1; i < static_cast<int>(v.size()); ++i) {
-        if (v[i] > v[best]) best = i;
-    }
-    return best;
+    return -1;  // TODO
 }
 
 int main() {
@@ -69,9 +66,9 @@ int main() {
         CHECK_NEAR(c3[1], -6.0, 1e-12);
         CHECK_NEAR(c3[2], 12.0, 1e-12);
     }
-    CHECK_NEAR(c[1], -2.0, 1e-12);
+    CHECK_NEAR(c[1], -2.0, 1e-12);   // original unchanged
 
-    CHECK(argmax({0.3, 0.9, 0.1}) == 1);
+    CHECK(argmax({0.3, 0.9, 0.1}) == 1);   // e.g. picking the most confident class
     CHECK(argmax({-5.0, -1.0, -3.0}) == 1);
     CHECK(argmax({}) == -1);
 

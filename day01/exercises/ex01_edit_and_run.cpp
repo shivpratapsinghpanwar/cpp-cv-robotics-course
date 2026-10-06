@@ -1,7 +1,7 @@
-// Day 0 - Exercise 1: edit, compile, run.
+// Day 1 - Exercise 1: edit, compile, run.
 //
-// In Visual Studio: Startup Item = day00_ex01.exe, then Ctrl+F5.
-// In a terminal:    .\build.ps1 day00_ex01
+// In Visual Studio: Startup Item = day01_ex01.exe, then Ctrl+F5.
+// In a terminal:    .\build.ps1 day01_ex01
 //
 // Do the TODOs one at a time. After each one, run again and watch a FAIL turn into PASS.
 // Goal: the last line says "0 failed".

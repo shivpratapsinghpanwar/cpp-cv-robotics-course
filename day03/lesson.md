@@ -1,135 +1,156 @@
-# Day 3 — Structs, `enum class`, namespaces, and code split across files
+# Day 3 — `std::vector`, `std::string`, references and `const`
 
-**Time:** ~25 min reading + ~50 min exercises
-**Goal:** model robot data with your own types, and organise code like real projects do: a header, a `.cpp` and a CMake library.
+**Goal:** store many values (sensor readings, image pixels), and pass big data to functions **without copying it**.
+
+## ⏱️ Your 90 minutes
+| Time | What |
+|---|---|
+| 0–25 min | Read sections 1–4. Section 4 (references) is the most important part of today |
+| 25–40 min | **Core** `day03_ex01`: sensor statistics with `std::vector` |
+| 40–55 min | **Core** `day03_ex02`: fix the by-value/by-reference bugs |
+| 55–80 min | **Core** `day03_ex03`: an image stored in a vector |
+| 80–90 min | Compare with `day03/solutions/`, tick the checklist |
+| *extra time* | *Bonus* `day03_ex04`: parse lidar text with `std::string` |
+
+Stuck for more than 15 minutes? Read the solution, understand it, move on.
 
 ---
 
-## 1. `struct` — your own data type
+## 1. `std::vector` — C++'s list (but one type only)
 
 ```cpp
-struct Pose2 {             // Python: @dataclass class Pose2: x: float = 0.0 ...
-    double x = 0.0;        // default member values
-    double y = 0.0;
-    double theta = 0.0;    // radians
-};                         // <- don't forget this semicolon!
+#include <vector>
 
-Pose2 a;                   // {0, 0, 0}
-Pose2 b{1.0, 2.0, 0.5};    // members in declaration order
-Pose2 c{.x = 1.0, .theta = 0.5};   // C++20 "designated initializers" (y stays 0)
-b.x += 0.1;                // access members with a dot
+std::vector<double> ranges = {1.2, 0.85, 3.4};   // Python: ranges = [1.2, 0.85, 3.4]
+ranges.push_back(2.0);                            // .append(2.0)
+std::cout << ranges.size();                       // len(ranges)  -> 4
+std::cout << ranges[0];                           // ranges[0]    -> 1.2 (NO bounds check!)
+std::cout << ranges.at(10);                       // bounds-checked: throws std::out_of_range
+ranges.back();  ranges.front();  ranges.empty();  // last, first, is it empty?
+
+std::vector<int> hist(256, 0);                    // 256 ints, all 0      ([0]*256)
+std::vector<std::uint8_t> image(640 * 480);       // 307200 bytes, all 0
 ```
 
-- Pass structs like vectors: `const Pose2&` to read, `Pose2&` to modify. Small structs (2–3 doubles) are fine by value too.
-- Return a struct to return several values at once: `Point2 midpoint(...)` returns `{x, y}`.
-- `{}` creates a default value of whatever type is expected: `return {};` returns `Point2{0, 0}`.
+- A vector stores its elements **contiguously** in memory, like a numpy array. That's why it's fast.
+- `v[i]` with a bad `i` does **not** raise an error like Python does. It reads or writes random memory ("undefined behaviour"). In Debug builds MSVC usually catches it with an assertion popup, but in Release it silently corrupts data. Use `.at(i)` while learning if you're unsure.
+- There is no negative indexing: `v[-1]` is a bug. Use `v.back()`.
 
-On Day 4, `struct` grows into `class` with member functions and guaranteed-valid state.
-
----
-
-## 2. `enum class` and `switch`
-
+### Looping
 ```cpp
-enum class Command { Forward, Backward, TurnLeft, TurnRight };
-
-Command c = Command::TurnLeft;
-switch (c) {
-    case Command::Forward:  /* ... */ break;   // without break, execution "falls through" into the next case!
-    case Command::TurnLeft: /* ... */ break;
-    default: break;
+for (double r : ranges) {              // Python: for r in ranges:   (r is a COPY)
+    std::cout << r << "\n";
+}
+for (std::size_t i = 0; i < ranges.size(); ++i) {   // when you need the index
+    std::cout << i << ": " << ranges[i] << "\n";
 }
 ```
-Use `enum class` (not plain `enum`) for states and modes: robot state machines, camera pixel formats, error codes. If a `switch` misses a case, `/W4` warns you.
+`.size()` returns `std::size_t`, an **unsigned** integer. Comparing it with a signed `int` triggers warning C4018/C4389. It also bites in a classic way: `ranges.size() - 1` when the vector is empty gives about 18 quintillion, not −1. So check `empty()` first.
 
 ---
 
-## 3. Namespaces
+## 2. Images are just vectors
 
-Namespaces group names so they don't collide (`cv::Mat`, `Eigen::Matrix3d`, `std::vector`):
+A grayscale image of `width × height` stored row by row ("row-major", same as numpy and OpenCV):
+
+```
+index = y * width + x          // pixel (x, y): x = column, y = row
+```
 ```cpp
-namespace geom {
-    struct Point2 { double x = 0.0, y = 0.0; };
-    double distance(const Point2& a, const Point2& b);
-}
-geom::Point2 p;                 // use with the prefix
-using geom::Point2;             // or import one name (fine inside a function or .cpp)
+std::vector<std::uint8_t> img(width * height);
+img[y * width + x] = 255;      // numpy: img[y, x] = 255
 ```
-⚠️ Never write `using namespace std;` in a header. Every file that includes it inherits the pollution. In small `.cpp` files it's allowed but frowned upon. This course always writes `std::`.
+On Day 12 you'll see that OpenCV's `cv::Mat` is exactly this, plus a header (width, height, type).
 
 ---
 
-## 4. Headers and source files
+## 3. `std::string`
 
-Real projects split code into a **header** (`.hpp`: *what* exists) and a **source** file (`.cpp`: *how* it works):
-
+```cpp
+#include <string>
+std::string name = "camera";
+name += "_left";                       // "camera_left"
+name.size();                           // 11
+name.substr(0, 6);                     // "camera"   (start, length)  — Python: name[0:6]
+name.find("left");                     // 7, or std::string::npos if not found
+name.starts_with("cam");               // true (C++20)
+std::string s = std::to_string(42);    // str(42)
+double d = std::stod("3.14");          // float("3.14")
+int i = std::stoi("42");               // int("42")
 ```
-geometry.hpp   ── declarations:  double distance(const Point2& a, const Point2& b);
-geometry.cpp   ── definitions:   double distance(const Point2& a, const Point2& b) { return ...; }
-main.cpp       ── #include "geometry.hpp" and calls geom::distance(...)
+`'a'` (single quotes) is a `char`, `"a"` (double quotes) is a string. They are different types.
+
+### Parsing text with `std::istringstream`
+Sensor drivers and log files often give you lines of text. `istringstream` splits on whitespace for you:
+```cpp
+#include <sstream>
+std::istringstream in("SCAN 3 1.5 2.0 0.7");
+std::string tag;  int n;  double a, b, c;
+in >> tag >> n >> a >> b >> c;       // tag="SCAN", n=3, a=1.5 ...
+if (!in) { /* reading failed: bad or missing data */ }
 ```
-
-`#include "file.hpp"` literally pastes the file's text in. `#pragma once` stops it being pasted twice into the same `.cpp`.
-
-### Why split?
-- Each `.cpp` compiles **separately**, so changing `main.cpp` doesn't recompile `geometry.cpp`. In big projects such as OpenCV and ROS, this saves minutes per build.
-- Other programs can reuse the library by including the header and linking the `.lib`.
-
-### The One Definition Rule — and the linker errors you'll meet
-- Declarations can appear many times. A function's **definition** (its body) must exist **exactly once** in the whole program.
-- **`LNK2019: unresolved external symbol ... geom::distance ...`** → you declared it, but its body was never compiled into the program. Typical causes: you forgot to add the `.cpp` to CMake, misspelled the function, gave the parameters different types in the `.hpp` and `.cpp`, or forgot `namespace geom { }` around the definitions.
-- **`LNK2005: ... already defined`** → you put a function body in a header that's included by two `.cpp` files. Fix: move it to the `.cpp`, or mark it `inline`.
-
-Compiler errors (`C....`) mean one file is wrong. Linker errors (`LNK....`) mean the pieces don't fit together.
 
 ---
 
-## 5. CMake: libraries and targets
+## 4. References — the most important idea today
 
-Open `day03/CMakeLists.txt`. It's short:
-```cmake
-add_library(day03_geometry STATIC exercises/geometry.cpp)          # build a library
-target_include_directories(day03_geometry PUBLIC exercises)        # users can #include its header
-
-add_exercise(day03_ex01 exercises/ex01_geometry_test.cpp)          # a program (course helper around add_executable)
-target_link_libraries(day03_ex01 PRIVATE day03_geometry)           # ...that uses the library
+A **reference** is another name for an existing variable:
+```cpp
+int a = 5;
+int& r = a;   // r IS a (an alias)
+r = 10;       // now a == 10
 ```
-This is **exactly** the pattern you'll use for OpenCV on Day 8: `find_package(OpenCV)` then `target_link_libraries(my_app PRIVATE ${OpenCV_LIBS})`.
+
+### Why it matters: function parameters
+
+```cpp
+void f(std::vector<double> v);         // BY VALUE:     copies the whole vector
+void g(std::vector<double>& v);        // BY REFERENCE: works on the caller's vector, can modify it
+void h(const std::vector<double>& v);  // BY CONST REFERENCE: no copy, read-only  <-- most common
+```
+
+> ⚠️ **Python ↔ C++ difference.** In Python, passing a list to a function lets the function modify the caller's list. In C++, **by-value copies everything**. If `f` modifies `v`, the caller sees no change. And copying a 1920×1080×3 image (6 MB) on every call, 30 times a second, really hurts.
+
+**Rules of thumb (use these for the rest of the course):**
+| Parameter type | Pass as |
+|---|---|
+| Small things: `int`, `double`, `bool`, `char` | by value: `double x` |
+| Big things you only **read**: vectors, strings, images | `const T&`: `const std::vector<double>& v` |
+| Things the function must **modify** | `T&`: `std::vector<double>& v` |
+| Returning a new result | just `return` it. C++ hands it back without a slow copy |
+
+Range-for works with references too:
+```cpp
+for (double& r : ranges) { r *= 2.0; }          // modifies the elements
+for (const std::string& s : names) { ... }      // no copies of each string
+```
+
+### `const`
+`const` promises "this will not change", and the compiler enforces it. Use it everywhere you can. It documents intent and catches bugs:
+```cpp
+const int width = 640;
+width = 800;               // error C3892: you cannot assign to a variable that is const
+```
 
 ---
 
-## 6. Coordinate frames (the robotics bit)
+## Today's exercises (`day03/exercises/`)
 
-A robot at pose `(x, y, θ)` sees the world in **its own frame**: +x is forward and +y is to its left. A lidar or camera reports points in the robot (sensor) frame, while the map is in the world frame.
-
-```
-robot → world:   p_world = R(θ) · p_robot + t          R(θ) = [cos θ  -sin θ]    t = [x]
-world → robot:   p_robot = R(−θ) · (p_world − t)              [sin θ   cos θ]        [y]
-```
-Today you'll write this by hand with `struct`s. On Day 9 you'll do the same with Eigen matrices (and in 3D).
-
-`std::atan2(dy, dx)` gives the angle of the vector `(dx, dy)` in (−π, π]. It's the right way to compute a bearing. Plain `atan(dy/dx)` loses the quadrant and fails when `dx == 0`.
-
----
-
-## Today's exercises
-
-| Target | Edit this file | You practise |
-|---|---|---|
-| `day03_ex01` | `exercises/geometry.cpp` (tests in `ex01_geometry_test.cpp`) | structs, header/source split, `<cmath>`, frames |
-| `day03_ex02` | `exercises/ex02_robot_commands.cpp` | `enum class`, `switch`, using your library |
+| Target | You practise |
+|---|---|
+| **Core** `day03_ex01` sensor stats | vectors, loops, `const&`, empty-input edge cases |
+| **Core** `day03_ex02` references | by value vs by reference: fix the broken functions |
+| **Core** `day03_ex03` gray image | an image as `vector<uint8_t>`, `y*w+x`, invert, threshold, histogram |
+| *Bonus* `day03_ex04` parse lidar | `std::string`, `istringstream`, input validation |
 
 ### Checklist
-- [ ] Both exercises show **0 failed**
-- [ ] **Break it on purpose (5 min, very valuable):**
-  1. In `geometry.cpp`, rename `distance` to `distanc` and build. Read the **LNK2019** error. Undo.
-  2. Delete the closing `;` after `struct Point2 { ... }` in the header and build. Read the error. Undo.
-  3. Remove `namespace geom {` / `}` from `geometry.cpp` and build. Which error do you get, and why?
-- [ ] I can explain the difference between a declaration and a definition
-- [ ] I can read `day03/CMakeLists.txt` and say what each line does
+- [ ] **Core:** `day03_ex01`, `ex02`, `ex03` show **0 failed**
+- [ ] I can explain the difference between `f(std::vector<double> v)`, `f(std::vector<double>& v)` and `f(const std::vector<double>& v)`
+- [ ] I know what pixel `img[3 * width + 5]` is (x = ?, y = ?)
+- [ ] I put a breakpoint inside a loop and watched a vector's contents in the debugger (expand it in **Locals**)
 
 ### Stretch goal
-Add `double path_length(const std::vector<Point2>& path)` (the sum of the distances between consecutive points) to the header and the `.cpp`, and test it from `ex01_geometry_test.cpp`.
+In `ex03`, write `std::vector<std::uint8_t> flip_horizontal(const std::vector<std::uint8_t>& img, int width, int height)` (mirror image left↔right) and test it with a few `CHECK`s of your own.
 
 ### When you're done
-Compare your code with `day03/solutions/`. Next up is Day 4: classes, constructors, operator overloading and an `Image` class.
+Compare your code with `day03/solutions/`, note your open questions, and move on to Day 4.

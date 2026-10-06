@@ -1,4 +1,4 @@
-// Day 0 - Exercise 2: the corrected program. The 5 fixes are marked FIX.
+// Day 1 - Exercise 2: the corrected program. The 5 fixes are marked FIX.
 
 #include <iostream>
 

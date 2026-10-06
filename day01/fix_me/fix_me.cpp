@@ -1,7 +1,7 @@
-// Day 0 - Exercise 2: this program has 5 mistakes and does NOT compile. Fix them!
+// Day 1 - Exercise 2: this program has 5 mistakes and does NOT compile. Fix them!
 //
 // Compile by hand (in "Developer PowerShell for VS"):
-//     cd D:\Cpp\day00\fix_me
+//     cd D:\Cpp\day01\fix_me
 //     cl /EHsc fix_me.cpp
 // Fix the FIRST error the compiler reports, save, compile again. Repeat.
 //

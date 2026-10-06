@@ -1,94 +1,81 @@
 # C++ for Computer Vision & Robotics — a 20-day course
 
-From "very little C++" to writing real CV and robotics code (OpenCV, Eigen, control loops, threads) in **20 days at 60–90 min/day**.
+From **zero C++** to small real CV and robotics programs (OpenCV, Eigen, control loops, threads) in **20 days × 90 minutes**.
 It's written for someone who knows some **Python / numpy / CV**, so lessons compare the two wherever that helps.
 
-Every day has:
-- `lesson.md` — about 20 minutes of reading with short code snippets
-- `exercises/` — programs with `// TODO`s. Each prints `PASS` / `FAIL` per check; your goal is **0 failed**
-- `solutions/` — reference solutions (look only after trying!)
-
-> **Never compiled C++ or used Visual Studio before? Start with [`day00/lesson.md`](day00/lesson.md).**
-> It walks you through compiling by hand, using Visual Studio click by click, and reading C++ syntax line by line.
+## 👉 Start here
+1. Open **`day01/lesson.md`** (in this folder: `D:\Cpp\day01\lesson.md`).
+2. Follow it top to bottom. It shows you how to compile, how to use Visual Studio, and how to read C++. No experience needed.
+3. Each day after that: open `dayNN/lesson.md` and follow the **⏱️ Your 90 minutes** table at its top.
 
 ---
 
-## Setup (once, ~5 min)
+## How every day works (90 minutes, really)
 
-Requirements: Windows with **Visual Studio 2022/2026** and the *Desktop development with C++* workload. CMake and Ninja are included with it.
+Each lesson starts with a time table like this:
 
-**Visual Studio (recommended):** File → Open → Folder → this folder. VS reads `CMakePresets.json`.
-Choose the **debug** configuration, pick a startup item such as `day01_ex02.exe`, then press **Ctrl+F5** (run) or **F5** (debug).
+| Time | What |
+|---|---|
+| 0–25 min | Read the lesson |
+| 25–80 min | **Core** exercises (always fits in the time) |
+| 80–90 min | Compare with `solutions/`, tick the checklist |
+| *extra time* | *Bonus* exercise (skip it if you're out of time; it's fine) |
 
-**Terminal (PowerShell):**
+- `exercises/` contains programs with `// TODO`s. Each prints `PASS` / `FAIL` per check, and your goal is **0 failed**.
+- `solutions/` contains the reference answers. **Stuck for more than 15 minutes? Read the solution, understand it, move on.** Finishing the core matters more than finishing everything.
+
+## Running exercises
+
+**Visual Studio:** File → Open → Folder → `D:\Cpp`. Pick the program in the **Select Startup Item** dropdown (e.g. `day02_ex02.exe`), then press **Ctrl+F5** to run or **F5** to debug. Day 1 shows this click by click.
+
+**Terminal (PowerShell in `D:\Cpp`):**
 ```powershell
-.\build.ps1 day01_ex02            # build + run one exercise
-.\build.ps1 day01_ex02 -Solution  # run the reference solution instead
-.\build.ps1                       # build everything
-.\build.ps1 -List                 # list all targets
-.\build.ps1 day01_ex02 -Release   # optimized build (for speed measurements)
+.\build.ps1 day02_ex02            # build + run one exercise
+.\build.ps1 day02_ex02 -Solution  # run the reference solution instead
+.\build.ps1 -List                 # list all programs
 ```
-`build.ps1` finds Visual Studio's compiler by itself, so you don't need a "Developer PowerShell".
-
----
-
-## Daily routine (60–90 min)
-
-1. **Read** `dayNN/lesson.md` (~20 min). Type the snippets out instead of copy-pasting.
-2. **Do** the exercises in order (~50 min). Run them often; fix the **first** error first.
-3. **Debug, don't guess:** when a check fails, set a breakpoint (F9) and step through it (F10/F11).
-4. **Tick the checklist** at the bottom of the lesson. Try the stretch goal if you have time.
-5. **Review**: compare your code with `solutions/` and note anything that confused you. Then move on to the next day.
 
 ---
 
 ## Syllabus
 
-| Day | Date | Topic | You build |
+| Day | Date | Topic | ✅ = ready |
 |---|---|---|---|
-| **Phase 1 — Core C++** | | | |
-| 0 ✅ | Tue 6 Oct | **Start here:** what compiling is, compile by hand, Visual Studio click by click, reading C++ syntax | first program, fixing a broken program |
-| 1 ✅ | Tue 6 Oct | Toolchain, types, `if`/loops, functions, debugger | pixel clamping, RGB→gray, angle maths, ASCII circle |
-| 2 ✅ | Wed 7 Oct | `std::vector`, `std::string`, references, `const` | sensor stats, image-as-vector ops, lidar text parser |
-| 3 ✅ | Thu 8 Oct | `struct`, `enum class`, namespaces, header/source, CMake libraries | 2D geometry library, robot frames, command interpreter |
-| 4 | Fri 9 Oct | Classes, constructors, invariants, operator overloading, `std::array` | `Vec2` type, an `Image` class with bounds-checked `at(x, y)` |
-| 5 | Sat 10 Oct | Stack vs heap, pointers, RAII, `unique_ptr` / `shared_ptr` | image buffer ownership, sensor pipeline |
-| 6 | Sun 11 Oct | STL algorithms, lambdas, `std::optional`, `std::map` | bounding boxes, IoU, sorting detections, simple NMS |
-| 7 | Mon 12 Oct | Move semantics, basic templates, const-correctness | **Mini-project:** PGM image I/O, box blur, Sobel edges (no libraries) |
-| **Phase 2 — Maths & robotics** | | | |
-| 8 | Tue 13 Oct | vcpkg + `find_package`, Eigen basics, Debug vs Release | install OpenCV + Eigen, first matrix code |
-| 9 | Wed 14 Oct | Rotations, homogeneous transforms, quaternions | 2-link arm forward kinematics, frame chains |
-| 10 | Thu 15 Oct | `std::chrono`, fixed-rate loops, PID | PID controller sim, diff-drive odometry |
-| 11 | Fri 16 Oct | `<random>` noise, Kalman filters | 1D and 2D Kalman filters with Eigen |
-| 12 | Sat 17 Oct | `std::thread`, `mutex`, `atomic`, thread-safe queue | camera thread → processing thread pipeline |
-| **Phase 3 — OpenCV** | | | |
-| 13 | Sun 18 Oct | `cv::Mat`: types, copies vs `clone()`, pixel access, ROI | numpy ↔ `cv::Mat` cheat sheet in code |
-| 14 | Mon 19 Oct | Colour spaces, threshold, blur, morphology, Canny, contours | HSV colour-object detector |
-| 15 | Tue 20 Oct | `VideoCapture`, webcam loop, FPS, fast pixel loops | real-time tracker with FPS overlay |
-| 16 | Wed 21 Oct | ORB features, matching, homography + RANSAC | image alignment / planar object detection |
-| 17 | Thu 22 Oct | Camera model, calibration, undistortion, `solvePnP` | camera pose from a chessboard (into Eigen) |
-| **Phase 4 — Capstone & practice** | | | |
-| 18 | Fri 23 Oct | Capstone 1: architecture, threads, pixel→world | colour-object tracker with world coordinates |
-| 19 | Sat 24 Oct | Capstone 2: PID steers a simulated robot to the target; ASan, debugging | the closed-loop "see → decide → act" demo |
-| 20 | Sun 25 Oct | GoogleTest, profiling, how this maps to ROS 2 nodes/topics; next steps | tested, profiled capstone + a learning roadmap |
+| **Week 1: C++ basics** | | | |
+| 1 | Tue 6 Oct | **Start here:** compiling, Visual Studio, reading C++ syntax | ✅ |
+| 2 | Wed 7 Oct | Types, `if`, loops, functions (pixel & robot maths) | ✅ |
+| 3 | Thu 8 Oct | `std::vector`, `std::string`, references, `const` (an image as a vector) | ✅ |
+| 4 | Fri 9 Oct | `struct`, headers, namespaces, CMake libraries (robot geometry) | ✅ |
+| 5 | Sat 10 Oct | Classes and operator overloading (`Vec2`, an `Image` class) | |
+| 6 | Sun 11 Oct | Memory: stack/heap, pointers, smart pointers | |
+| 7 | Mon 12 Oct | STL algorithms and lambdas (sorting detections, IoU) | |
+| **Week 2: maths & robotics** | | | |
+| 8 | Tue 13 Oct | Mini-project: blur and edge detection in plain C++ | |
+| 9 | Wed 14 Oct | Installing libraries (vcpkg), Eigen vectors and matrices | |
+| 10 | Thu 15 Oct | Rotations and transforms with Eigen (2-link arm) | |
+| 11 | Fri 16 Oct | Control loop: timing and a PID controller simulation | |
+| **Week 3: OpenCV** | | | |
+| 12 | Sat 17 Oct | `cv::Mat`: load, show, pixels (numpy ↔ OpenCV) | |
+| 13 | Sun 18 Oct | Colour, threshold, blur, contours: detect a coloured object | |
+| 14 | Mon 19 Oct | Webcam loop, FPS, tracking the object live | |
+| 15 | Tue 20 Oct | Kalman filter: smoothing a noisy track | |
+| 16 | Wed 21 Oct | Threads: camera thread → processing thread | |
+| 17 | Thu 22 Oct | Camera calibration and object pose (`solvePnP`) | |
+| **Week 4: putting it together** | | | |
+| 18 | Fri 23 Oct | Capstone 1: tracker with world coordinates | |
+| 19 | Sat 24 Oct | Capstone 2: PID steers a simulated robot to the target | |
+| 20 | Sun 25 Oct | Debugging and testing habits, how this maps to ROS 2, what to learn next | |
 
-✅ = available now. Later days are written one at a time as you progress, so each one builds on what you actually did.
+Days 5–20 are added one at a time, so each builds on the previous ones.
+Missed a day? Don't double up. Just continue with the next day's lesson tomorrow.
 
 ---
 
-## Repository layout
-
+## Folder layout
 ```
-CMakeLists.txt      top-level build: C++20, warnings, adds every dayNN/ folder
-CMakePresets.json   "debug" and "release" presets (Ninja + MSVC)
-build.ps1           one-command build & run
-vcpkg.json          OpenCV + Eigen (installed on Day 8)
-common/check.hpp    the tiny CHECK / CHECK_NEAR test helper
-dayNN/              lesson.md, CMakeLists.txt, exercises/, solutions/
+README.md           this page
+build.ps1           build & run from a terminal
+CMakeLists.txt      the build setup (you don't need to edit it)
+common/check.hpp    the PASS/FAIL helper the exercises use
+dayNN/              lesson.md, exercises/, solutions/
 ```
-
-## Rules that save hours
-- Read the **first** compiler error. The rest are often echoes of it.
-- Warnings are free bug reports. This course builds with `/W4`, so read them.
-- Use `const&` for big inputs, `&` for outputs, and plain values for small things.
-- When something's off, use the debugger. Don't sprinkle prints everywhere.
