@@ -1,6 +1,6 @@
-// Day 1 - Exercise 4: your first "image" - nested loops over pixels.
+// Day 2 - Exercise 4: your first "image" - nested loops over pixels.
 //
-// Run:   .\build.ps1 day01_ex04
+// Run:   .\build.ps1 day02_ex04
 //
 // Every image algorithm (blur, threshold, edge detection...) is at heart two
 // nested loops: for each row y, for each column x, do something with pixel (x, y).

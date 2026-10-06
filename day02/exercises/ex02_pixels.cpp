@@ -1,6 +1,6 @@
-// Day 1 - Exercise 2: pixel arithmetic.
+// Day 2 - Exercise 2: pixel arithmetic.
 //
-// Run:   .\build.ps1 day01_ex02
+// Run:   .\build.ps1 day02_ex02
 //
 // A grayscale pixel is a number 0 (black) .. 255 (white).
 // Implement the functions below so every CHECK in main() passes.

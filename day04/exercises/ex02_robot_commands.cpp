@@ -1,6 +1,6 @@
-// Day 3 - Exercise 2: drive a robot with commands (enum class + switch + structs).
+// Day 4 - Exercise 2: drive a robot with commands (enum class + switch + structs).
 //
-// Run:   .\build.ps1 day03_ex02
+// Run:   .\build.ps1 day04_ex02
 // Do exercise 1 (geometry.cpp) first - this program uses geom::normalize_angle.
 
 #include <cmath>

@@ -1,4 +1,4 @@
-// Day 1 - Exercise 2: reference solution.
+// Day 2 - Exercise 2: reference solution.
 
 #include <cmath>
 #include <cstdint>

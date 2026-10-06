@@ -1,6 +1,6 @@
-// Day 1 - Exercise 3: robot maths with functions and loops.
+// Day 2 - Exercise 3: robot maths with functions and loops.
 //
-// Run:   .\build.ps1 day01_ex03
+// Run:   .\build.ps1 day02_ex03
 
 #include <iostream>
 

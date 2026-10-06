@@ -1,4 +1,4 @@
-// Day 3 - Exercise 2: reference solution.
+// Day 4 - Exercise 2: reference solution.
 
 #include <cmath>
 #include <iostream>

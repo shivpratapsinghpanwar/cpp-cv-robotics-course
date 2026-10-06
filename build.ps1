@@ -3,10 +3,10 @@
   Build (and run) a course exercise with one command.
 
 .EXAMPLE
-  .\build.ps1 day01_ex02            # build + run your exercise
-  .\build.ps1 day01_ex02 -Solution  # build + run the reference solution (day01_sol02)
+  .\build.ps1 day02_ex02            # build + run your exercise
+  .\build.ps1 day02_ex02 -Solution  # build + run the reference solution (day02_sol02)
   .\build.ps1                       # build everything (no run)
-  .\build.ps1 day01_ex02 -Release   # optimized build
+  .\build.ps1 day02_ex02 -Release   # optimized build
   .\build.ps1 -List                 # show all available targets
 #>
 param(

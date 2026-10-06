@@ -1,6 +1,6 @@
 // geometry.cpp - DEFINITIONS (function bodies) for geometry.hpp.
 //
-// Implement every TODO. Test with:   .\build.ps1 day03_ex01
+// Implement every TODO. Test with:   .\build.ps1 day04_ex01
 //
 // Useful functions from <cmath>:
 //   std::sqrt(x), std::hypot(dx, dy) == sqrt(dx*dx + dy*dy),
@@ -29,7 +29,7 @@ Point2 rotate(const Point2& p, double angle_rad) {
 }
 
 double normalize_angle(double rad) {
-    return rad;  // TODO  (same idea as Day 1's normalize_deg, with 2*kPi instead of 360)
+    return rad;  // TODO  (same idea as Day 2's normalize_deg, with 2*kPi instead of 360)
 }
 
 double heading_to(const Pose2& robot, const Point2& target) {

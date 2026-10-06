@@ -1,6 +1,6 @@
-// Day 2 - Exercise 4: parsing sensor text with std::string and std::istringstream.
+// Day 3 - Exercise 4: parsing sensor text with std::string and std::istringstream.
 //
-// Run:   .\build.ps1 day02_ex04
+// Run:   .\build.ps1 day03_ex04
 //
 // Our pretend 2D lidar sends one text line per scan:
 //

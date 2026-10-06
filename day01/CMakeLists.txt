@@ -1,10 +1,8 @@
-# Each exercise and solution is its own small program (target).
-add_exercise(day01_ex01 exercises/ex01_hello.cpp)
-add_exercise(day01_ex02 exercises/ex02_pixels.cpp)
-add_exercise(day01_ex03 exercises/ex03_robot_math.cpp)
-add_exercise(day01_ex04 exercises/ex04_ascii_image.cpp)
+add_exercise(day01_hello hello.cpp)
 
-add_exercise(day01_sol01 solutions/ex01_hello.cpp)
-add_exercise(day01_sol02 solutions/ex02_pixels.cpp)
-add_exercise(day01_sol03 solutions/ex03_robot_math.cpp)
-add_exercise(day01_sol04 solutions/ex04_ascii_image.cpp)
+add_exercise(day01_ex01 exercises/ex01_edit_and_run.cpp)
+add_exercise(day01_sol01 solutions/ex01_edit_and_run.cpp)
+
+# fix_me/fix_me.cpp is deliberately NOT built here: it contains mistakes on purpose,
+# and you compile it by hand with cl (see lesson Part 5). Its corrected version:
+add_exercise(day01_sol02 solutions/fix_me.cpp)
