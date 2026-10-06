@@ -49,7 +49,7 @@ try {
 
     if ($List) {
         cmake --build --preset $preset --target help |
-            Select-String -Pattern '^(day\d\d_(ex|sol)\d+):' |
+            Select-String -Pattern '^(day\d\d_((ex|sol)\d+|hello)):' |
             ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object
         return
     }

@@ -8,6 +8,9 @@ Every day has:
 - `exercises/` — programs with `// TODO`s. Each prints `PASS` / `FAIL` per check; your goal is **0 failed**
 - `solutions/` — reference solutions (look only after trying!)
 
+> **Never compiled C++ or used Visual Studio before? Start with [`day00/lesson.md`](day00/lesson.md).**
+> It walks you through compiling by hand, using Visual Studio click by click, and reading C++ syntax line by line.
+
 ---
 
 ## Setup (once, ~5 min)
@@ -44,6 +47,7 @@ Choose the **debug** configuration, pick a startup item such as `day01_ex02.exe`
 | Day | Date | Topic | You build |
 |---|---|---|---|
 | **Phase 1 — Core C++** | | | |
+| 0 ✅ | Tue 6 Oct | **Start here:** what compiling is, compile by hand, Visual Studio click by click, reading C++ syntax | first program, fixing a broken program |
 | 1 ✅ | Tue 6 Oct | Toolchain, types, `if`/loops, functions, debugger | pixel clamping, RGB→gray, angle maths, ASCII circle |
 | 2 ✅ | Wed 7 Oct | `std::vector`, `std::string`, references, `const` | sensor stats, image-as-vector ops, lidar text parser |
 | 3 ✅ | Thu 8 Oct | `struct`, `enum class`, namespaces, header/source, CMake libraries | 2D geometry library, robot frames, command interpreter |
