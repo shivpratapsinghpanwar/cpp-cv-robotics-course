@@ -142,4 +142,4 @@ width = 800;               // error C3892: you cannot assign to a variable that 
 In `ex03`, write `std::vector<std::uint8_t> flip_horizontal(const std::vector<std::uint8_t>& img, int width, int height)` (mirror image left↔right) and test it with a few `CHECK`s of your own.
 
 ### When you're done
-Tell Claude **"Day 2 done"** (plus questions or your code).
+Compare your code with `day02/solutions/`, note your open questions, and move on to Day 3.

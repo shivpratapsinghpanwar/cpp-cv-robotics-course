@@ -191,4 +191,4 @@ This is 10× faster than adding `print` everywhere. Use it on every bug.
 In `ex04`, draw a **ring** (outline only) instead of a filled circle. Then add a second circle.
 
 ### When you're done
-Tell Claude: **"Day 1 done"** and paste anything that confused you (or your exercise code). You'll get feedback and Day 2 will be generated.
+Compare your code with `day01/solutions/`. Then write down anything that confused you, and take those questions into Day 2.

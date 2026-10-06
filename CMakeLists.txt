@@ -47,7 +47,7 @@ endfunction()
 
 # --- Days --------------------------------------------------------------------
 # Each dayNN/ folder that has a CMakeLists.txt is added automatically.
-foreach(n RANGE 1 20)
+foreach(n RANGE 0 20)
     if(n LESS 10)
         set(day "day0${n}")
     else()
