@@ -132,4 +132,4 @@ Today you'll write this by hand with `struct`s. On Day 9 you'll do the same with
 Add `double path_length(const std::vector<Point2>& path)` (the sum of the distances between consecutive points) to the header and the `.cpp`, and test it from `ex01_geometry_test.cpp`.
 
 ### When you're done
-Tell Claude **"Day 3 done"**. Day 4 (classes, constructors, operator overloading and an `Image` class) will be generated, along with feedback on your code.
+Compare your code with `day03/solutions/`. Next up is Day 4: classes, constructors, operator overloading and an `Image` class.

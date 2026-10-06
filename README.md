@@ -35,7 +35,7 @@ Choose the **debug** configuration, pick a startup item such as `day01_ex02.exe`
 2. **Do** the exercises in order (~50 min). Run them often; fix the **first** error first.
 3. **Debug, don't guess:** when a check fails, set a breakpoint (F9) and step through it (F10/F11).
 4. **Tick the checklist** at the bottom of the lesson. Try the stretch goal if you have time.
-5. **Report back** to Claude: *"Day N done"* plus your questions or code. You'll get a review, and the next day's lesson and exercises are generated for you.
+5. **Review**: compare your code with `solutions/` and note anything that confused you. Then move on to the next day.
 
 ---
 
