@@ -1,0 +1,9 @@
+{
+  "name": "cpp-for-cv-robotics",
+  "version-string": "0.1.0",
+  "description": "Libraries for Phase 2-4 of the course. Installed on Day 8 (not before) - the exact steps are in day08/lesson.md.",
+  "dependencies": [
+    "eigen3",
+    "opencv4"
+  ]
+}

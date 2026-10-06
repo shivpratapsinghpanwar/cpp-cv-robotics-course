@@ -1,0 +1,10 @@
+build/
+out/
+.vs/
+vcpkg_installed/
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.pgm
+!data/*.pgm
